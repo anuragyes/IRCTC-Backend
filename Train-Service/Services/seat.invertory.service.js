@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { BadRequestError } = require("../../User-Service/utils/errorTypes");
+
 
 const prisma = new PrismaClient();
 
@@ -19,7 +19,7 @@ class SeatInventoryService {
       if (stops.length < 2) throw new Error("Train must have at least 2 stops");
 
       const coaches = await tx.coach.findMany({ where: { trainId, type: classType } });
-      if (!coaches.length) throw new BadRequestError("No coaches found for this class");
+      if (!coaches.length) throw new Error("No coaches found for this class");
 
       const totalSeats = coaches.reduce((sum, c) => sum + c.totalSeats, 0);
       const racSeats = Math.floor(totalSeats * 0.2);
@@ -48,7 +48,7 @@ class SeatInventoryService {
       const segments = [];
       for (let seg = fromStopNo; seg < toStopNo; seg++) {
         const inv = await tx.seatInventory.findFirst({ where: { trainId, travelDate: journeyDate, classType, quota, segmentNo: seg } });
-        if (!inv) throw new BadRequestError(`Inventory missing for segment ${seg}`);
+        if (!inv) throw new Error(`Inventory missing for segment ${seg}`);
         segments.push(inv);
       }
 
@@ -68,14 +68,14 @@ class SeatInventoryService {
             where: { id: seg.id, version: seg.version, availableCount: { gte: passengerCount } },
             data: { availableCount: { decrement: passengerCount }, version: { increment: 1 } }
           });
-          if (!updated.count) throw new BadRequestError("Seat conflict");
+          if (!updated.count) throw new Error("Seat conflict");
         }
         if (status === "RAC") {
           const updated = await tx.seatInventory.updateMany({
             where: { id: seg.id, version: seg.version, racAvailable: { gte: passengerCount } },
             data: { racAvailable: { decrement: passengerCount }, version: { increment: 1 } }
           });
-          if (!updated.count) throw new BadRequestError("RAC conflict");
+          if (!updated.count) throw new Error("RAC conflict");
         }
       }
 
@@ -128,8 +128,8 @@ class SeatInventoryService {
     return await prisma.$transaction(async (tx) => {
       // find pnr number if pnr number 
       const booking = await tx.booking.findUnique({ where: { pnrNumber } });
-      if (!booking) throw new BadRequestError("Booking not found");
-      if (booking.status === "CANCELLED") throw new BadRequestError("Already cancelled");
+      if (!booking) throw new Error("Booking not found");
+      if (booking.status === "CANCELLED") throw new Error("Already cancelled");
 
 
       // step 2
@@ -181,7 +181,7 @@ class SeatInventoryService {
    async GetTicket(userID) {
 
     if (!userID) {
-        throw new BadRequestError("userID is missing");
+        throw new Error("userID is missing");
     }
 
     const tickets = await prisma.booking.findMany({
