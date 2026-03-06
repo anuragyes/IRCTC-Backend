@@ -1,10 +1,11 @@
 
 
 
-const { config } = require("../config");
+
+const { config } = require("../Config/index");
 const { TooManyRequestsError, BadRequestError } = require("./errorTypes");
 const otpgenerator = require("otp-generator");
-const RedisClient = require("../config/redis");
+const RedisClient = require("../Config/redis");
 const crypto = require("crypto");
 
 const redis = RedisClient.getInstance();
