@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 
-const { config } = require("../config");
+const { config } = require("../Config/index");
 const { prisma } = require("../Config/prisma")
 const { UnauthorizedError, BadRequestError } = require("../utils/errorTypes");
 const { verifyRefreshToken } = require("../utils/auth");
