@@ -4,7 +4,7 @@
 
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const {config} = require("../config/index");
+const {config} = require("../Config/index");
 const { UnauthorizedError } = require("./errorTypes");
 
 
