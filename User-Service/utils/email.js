@@ -1,6 +1,6 @@
 
 const nodemailer = require("nodemailer");
-const { config } = require("../config");
+const { config } = require("../Config/index");
 
 const OTP_EXPIRY_MINUTES = config.OTP_EXPIRATION || 5;
 
