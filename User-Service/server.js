@@ -5,7 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 const Logger = require("./Config/logger");
-const {config}  = require('./config');
+const {config}  = require('./Config/index');
 
 const corsMiddleware = require("./Middleware/CorsMiddleware");
 
