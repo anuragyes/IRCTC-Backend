@@ -8,7 +8,8 @@
 
 
 
-const logger = require('../Config/logger');
+
+const logger = require('../Config/Logger');
 const reqLogger = (req, res, next) => {
     logger.debug(`Request Method: ${req.method}, Request URL: ${req.originalUrl}`);
     const start = Date.now();
@@ -20,6 +21,7 @@ const reqLogger = (req, res, next) => {
     });
      next();
 }
+
 
 
 module.exports = reqLogger;
