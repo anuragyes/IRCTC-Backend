@@ -1,4 +1,4 @@
-const logger = require("../Config/logger");
+const logger = require("../Config/Logger");
 const RedisClient = require("../Config/redis"); // import class
 const prisma = require("../Config/prisma");
 
