@@ -9,12 +9,12 @@ const Logger = require("./Config/Logger");
 const { config } = require('./Config/index');
 
 const corsMiddleware = require(
-    "../User-Service/Middleware/CorsMiddleware"
+    "./Middleware/corsMiddleware"
 );
 
-const reqLogger = require("../User-Service/Middleware/req.middleware");
+const reqLogger = require("./Middleware/req.middleware");
 
-const errorHandler = require('../User-Service/Middleware/error.middleware');
+const errorHandler = require('./Middleware/error.middleware');
 const Trainrouter = require('./routers/TrainRouter');
 const Stationrouter = require('./routers/Station.Router');
 const Routesrouter = require('./routers/Routes.router');
