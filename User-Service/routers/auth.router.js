@@ -1,5 +1,5 @@
 const express = require('express');
-const { sendotp, verifyotp, LoginDetails, rotateRefreshToken } = require('../controllers/auth.controller');
+const { sendotp, verifyotp, LoginDetails, rotateRefreshToken } = require('../Controllers/auth.controller');
 const router = express.Router();
 
 
