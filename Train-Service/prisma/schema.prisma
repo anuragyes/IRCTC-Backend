@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://admin:irctcpass@localhost:5432/train_service"
+}
+
+//////////////////////////////////////////////////////
+// 🚉 STATION
+//////////////////////////////////////////////////////
+
+model Station {
+  id       String  @id @default(uuid())
+  name     String
+  code     String  @unique
+  city     String
+  state    String
+  isActive Boolean @default(true)
+
+  routeStops RouteStop[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//////////////////////////////////////////////////////
+// 🚆 TRAIN
+//////////////////////////////////////////////////////
+
+model Train {
+  id          String  @id @default(uuid())
+  trainNumber String  @unique
+  trainName   String
+  type        String?
+
+  routeStops RouteStop[] // ✅ directly connected
+  coaches    Coach[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//////////////////////////////////////////////////////
+// 🚏 ROUTE STOP (Per Train)
+//////////////////////////////////////////////////////
+
+model RouteStop {
+  id                 String    @id @default(uuid())
+  trainId            String
+  stationId          String
+  stopNumber         Int
+  arrivalTime        DateTime?
+  departureTime      DateTime?
+  distanceFromSource Int?
+  isStop             Boolean   @default(true)
+
+  train   Train   @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  station Station @relation(fields: [stationId], references: [id])
+
+  @@unique([trainId, stopNumber])
+}
+
+//////////////////////////////////////////////////////
+// 🚃 COACH
+//////////////////////////////////////////////////////
+
+model Coach {
+  id         String @id @default(uuid())
+  trainId    String
+  coachName  String
+  type       String
+  totalSeats Int
+
+  train Train  @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  seats Seat[]
+
+  @@unique([trainId, coachName])
+}
+
+//////////////////////////////////////////////////////
+// 💺 SEAT
+//////////////////////////////////////////////////////
+
+model Seat {
+  id        String  @id @default(uuid())
+  coachId   String
+  seatNo    String
+  berthType String?
+
+  coach       Coach            @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  isBooked    Boolean          @default(false)
+  allocations SeatAllocation[]
+
+  @@unique([coachId, seatNo])
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  pnrNumber String   @unique
+
+  userID String   // store user id from User Service
+
+  trainId    String
+  travelDate DateTime
+  classType  String
+  quota      String   @default("GENERAL")
+
+  fromStopNo     Int
+  toStopNo       Int
+  passengerCount Int
+
+  status BookingStatus
+
+  seatNumber String?
+  racNumber  Int?
+  wlNumber   Int?
+
+  allocations SeatAllocation[]
+
+  createdAt DateTime @default(now())
+
+  @@index([trainId, travelDate])
+  @@index([trainId, travelDate, classType, quota])
+}
+// this table use For
+//Availability
+
+//Concurrency
+
+//Locking
+
+model SeatInventory {
+  id             String   @id @default(uuid())
+  trainId        String
+  travelDate     DateTime
+  classType      String
+  quota          String   @default("GENERAL")
+  segmentNo      Int
+  availableCount Int
+  racAvailable   Int
+  version        Int      @default(0) // Now we will use that version to prevent race conditions.
+
+  createdAt DateTime @default(now())
+
+  @@unique([trainId, travelDate, classType, quota, segmentNo])
+  @@index([trainId, travelDate])
+}
+
+enum BookingStatus {
+  CONFIRMED
+  RAC
+  WAITING
+  CANCELLED
+}
+
+
+model BookingCounter {
+  id         String   @id @default(uuid())
+  trainId    String
+  travelDate DateTime
+  classType  String
+  quota      String
+
+  racCounter Int @default(0)
+  wlCounter  Int @default(0)
+
+  @@unique([trainId, travelDate, classType, quota])
+}
+
+model SeatAllocation {
+  id         String   @id @default(uuid())
+  seatId     String
+  bookingId  String
+  travelDate DateTime
+  fromStopNo Int
+  toStopNo   Int
+
+  seat    Seat    @relation(fields: [seatId], references: [id], onDelete: Cascade)
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([seatId, travelDate])
+  @@index([bookingId])
+}
+
+
+
+
