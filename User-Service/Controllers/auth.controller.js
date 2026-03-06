@@ -1,5 +1,5 @@
 const { http } = require('winston');
-const { config } = require('../config');
+const { config } = require('../Config/index');
 const authService = require('../Services/auth.service');
 const asyncHandler = require('../utils/asyncHandler');
 const { BadRequestError, UnauthorizedError } = require('../utils/errorTypes');
