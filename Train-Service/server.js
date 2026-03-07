@@ -44,8 +44,8 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // -------------------- ROUTES --------------------
-app.get('/train', (req, res) => {
-    res.send('List of users');
+app.get('/', (req, res) => {
+    res.send('Train Service is live now ');
 });
 
 
