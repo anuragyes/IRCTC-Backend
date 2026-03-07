@@ -34,8 +34,8 @@ app.use("/api/auth/user",router);
 
 
 // -------------------- ROUTES --------------------
-app.get('/users', (req, res) => {
-    res.send('List of users');
+app.get('/', (req, res) => {
+    res.send('User-Service is live now');
 });
 
 
